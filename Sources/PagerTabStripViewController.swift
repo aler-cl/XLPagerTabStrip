@@ -59,7 +59,7 @@ open class PagerTabStripViewController: UIViewController, UIScrollViewDelegate {
     open var pagerBehaviour = PagerTabStripBehaviour.progressive(skipIntermediateViewControllers: true, elasticIndicatorLimit: true)
 
     open private(set) var viewControllers = [UIViewController]()
-    open private(set) var currentIndex = 1
+    public var currentIndex = 0
     open private(set) var preCurrentIndex = 0 // used *only* to store the index to which move when the pager becomes visible
 
     open var pageWidth: CGFloat {
@@ -104,9 +104,7 @@ open class PagerTabStripViewController: UIViewController, UIScrollViewDelegate {
         containerView.isPagingEnabled = true
         reloadViewControllers()
 
-        if currentIndex > viewControllers.count { return }
         let childController = viewControllers[currentIndex]
-        
         addChild(childController)
         childController.view.autoresizingMask = [.flexibleHeight, .flexibleWidth]
         containerView.addSubview(childController.view)
@@ -158,11 +156,9 @@ open class PagerTabStripViewController: UIViewController, UIScrollViewDelegate {
 
         if animated && pagerBehaviour.skipIntermediateViewControllers && abs(currentIndex - index) > 1 {
             var tmpViewControllers = viewControllers
-            if currentIndex > viewControllers.count { return }
             let currentChildVC = viewControllers[currentIndex]
             let fromIndex = currentIndex < index ? index - 1 : index + 1
             let fromChildVC = viewControllers[fromIndex]
-            if currentIndex > tmpViewControllers.count { return }
             tmpViewControllers[currentIndex] = fromChildVC
             tmpViewControllers[fromIndex] = currentChildVC
             pagerTabStripChildViewControllersForScrolling = tmpViewControllers
